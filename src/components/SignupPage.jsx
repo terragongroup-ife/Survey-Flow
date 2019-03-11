@@ -1,25 +1,25 @@
 import React, {Component} from 'react'
-import {Route, Redirect} from 'react-router-dom'
 import PropTypes from 'prop-types'
+import {Route, Redirect} from 'react-router-dom'
 import {Link} from 'react-router-dom'
-import LoginForm from './LoginForm'
+import SignupForm from './SignupForm'
 
 
-const ErrorLoggingIn = (props) => (
-  <div className="Error-signing-in container alert alert-warning alert-dismissible fade show" role="alert">
-    <strong>Holy guacamole! {props.errorMessage || "Errors aren't welcomed, so check the details you entered or your network."}</strong> 
+const ErrorSigningUp = (props) => (
+  <div className="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>Holy guacamole!</strong> {props.errorMessage || "Errors aren't welcomed, so check the details you entered or your network."}
     <button type="button" className="close" aria-label="Close">
       <span aria-hidden="true" onClick={props.close}>&times;</span>
     </button>
   </div>
 )
 
-class LoginPage extends Component {
+class SignupPage extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      loginError: false,
+      signupError: false,
       loading: false
     }
   }
@@ -35,35 +35,34 @@ class LoginPage extends Component {
     }))
   }
 
-  logUserIn = ({email, password}) => {
+  signUserUp = ({fullName, email, password}) => {
     // Send data to backend
     // If user is authed, add jwt to the localstorage
     // then redirect to the referral
     // Else, show an error
-    // console.log('To be fixed before tomorrow')
-    fetch('https://young-anchorage-24773.herokuapp.com/signin', {
+    fetch('https://young-anchorage-24773.herokuapp.com/signup', {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
       method: "POST",
       // mode: 'cors',
-      body: JSON.stringify({email: email, password: password})
+      body: JSON.stringify({email: email, password: password, name: fullName})
     })
       .then(res => res.json())
       .then(res => {
         console.log('User data:', res)
-        if (res.status === 200) {
+        if (res.status === 201) {
           // Write the hash of the user email in the localstorage
           const newHash = btoa(res.userId)
           localStorage.setItem('token', newHash)
           this.setState(() => ({
-            loginError: false,
+            signupError: false,
             redirect: true
           }))
         } else {
           this.setState(() => ({
-            loginError: true,
+            signupError: true,
             errorMessage: res.message
           }))
         }
@@ -71,7 +70,7 @@ class LoginPage extends Component {
       .catch(err => {
         console.log(err)
         this.setState(() => ({
-          loginError: true,
+          signupError: true,
           errorMessage: err.message
         }))
       })
@@ -79,14 +78,26 @@ class LoginPage extends Component {
 
   handleFormSubmit = (data) => {
     // Log 
-    console.log(data.email, data.password)
-    this.setState(() => ({
-      loading: true
-    }), this.logUserIn(data))
+    if (data.password !== data.repeatPassword) {
+      this.setState(() => ({
+        signupError: true,
+        errorMessage: 'Passwords do not match'
+      }))
+    } else if (data.password.length < 6) {
+      this.setState(() => ({
+        signupError: true,
+        errorMessage: 'Password should\n not be less than 6 characters'
+      }))
+    } else {
+      console.log(data.fullName, data.email, data.password)
+      this.setState(() => ({
+        loading: true
+      }), this.signUserUp(data))
+    }
   }
 
   closeButtons = () => {
-    this.setState({loginError: false})
+    this.setState({signupError: false})
   }
 
   render() {
@@ -98,16 +109,16 @@ class LoginPage extends Component {
       )
     } else {
       return (
-        <div className="Login-page">
-          <div className="Login-page__content">
-            <h3 className="text-center" style={{color: '#125266'}}>Hey! Good to see you again!</h3>
+        <div className="Signup-page">
+          <div className="Signup-page__content">
+            <h3 className="text-center" style={{color: '#125266'}}>Hey! Nice to have you here</h3>
             <div className="text-center" style={{marginTop: '-5px', marginBottom: '15px'}}>
-              <small style={{color: '#125266'}}>Sign in to get going</small>
+              <small style={{color: '#125266'}}>Sign up to continue</small>
             </div>
-            {this.state.loginError && <ErrorLoggingIn errorMessage={this.state.errorMessage} close={this.closeButtons} />}
-            <LoginForm handleLogin={this.handleFormSubmit} />
+            {this.state.signupError && <ErrorSigningUp errorMessage={this.state.errorMessage} close={this.closeButtons} />}
+            <SignupForm handleSignup={this.handleFormSubmit} />
             <div className="text-center" style={{marginTop: '5px'}}>
-              <span style={{fontSize: 'smaller'}}>New here? <Link to="/signup">Sign up</Link> now</span>
+              <span style={{fontSize: 'smaller'}}>Already have an account? <Link to="/login">Sign in</Link> now</span>
             </div>
           </div>
         </div>
@@ -116,14 +127,4 @@ class LoginPage extends Component {
   }
 }
 
-export default LoginPage
-
-
-
-
-// TODO FOR SIGNUP AND SIGN IN
-// - Send the data to the backend
-// - based on the response, set the error state and message accordingly to the user
-// - If no error, redirect user to the page they were coming from
-// - Remember to store user auth state in localStorae, and to fetch from there everytime in a private route
-// - Work on the protected route for the Fill Survey Page
+export default SignupPage

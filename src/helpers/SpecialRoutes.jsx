@@ -1,15 +1,13 @@
 import React from 'react'
 import {Route, Redirect} from 'react-router-dom'
 
-const PrivateRoute = ({component: Component, authed, ...rest}) => {
+const PrivateRoute = ({component: Component, ...rest}) => {
   // Get the token from the local storage
-  // Send it to the backend for verification
-  // Backend sends okay to verify
   return (
     <Route
       {...rest}
-      render={(props) => authed === true
-        ? <Component authed={authed} {...props} {...rest} />
+      render={(props) => localStorage.getItem('token')
+        ? <Component user={atob(localStorage.getItem('token'))} {...props} {...rest} />
         : <Redirect to={{pathname: '/login', state: {from: props.location}}} />
       }
     />
@@ -19,7 +17,7 @@ const PrivateRoute = ({component: Component, authed, ...rest}) => {
 const PublicRoute = ({component: Component, authed, ...rest}) => (
   <Route
     {...rest}
-    render={(props) => authed === false
+    render={(props) => (!localStorage.getItem('token'))
       ? <Component {...props} {...rest} />
       : <Redirect to='/' />
     }

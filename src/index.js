@@ -3,6 +3,11 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import jquery from 'jquery'
+// import Popper from 'popper.js';
+
+window.$ = window.jQuery = jquery
+require('bootstrap')
 
 require('dotenv').config()
 
