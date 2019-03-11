@@ -41,10 +41,10 @@ class SignupPage extends Component {
     // then redirect to the referral
     // Else, show an error
     fetch('https://young-anchorage-24773.herokuapp.com/signup', {
-      headers: {
+      headers: new Headers({
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
+      }),
       method: "POST",
       // mode: 'cors',
       body: JSON.stringify({email: email, password: password, name: fullName})

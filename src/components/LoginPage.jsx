@@ -42,10 +42,10 @@ class LoginPage extends Component {
     // Else, show an error
     // console.log('To be fixed before tomorrow')
     fetch('https://young-anchorage-24773.herokuapp.com/signin', {
-      headers: {
+      headers: new Headers({
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      },
+      }),
       method: "POST",
       // mode: 'cors',
       body: JSON.stringify({email: email, password: password})
