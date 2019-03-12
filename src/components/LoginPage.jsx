@@ -20,7 +20,9 @@ class LoginPage extends Component {
     super(props)
     this.state = {
       loginError: false,
-      loading: false
+      loading: false,
+      email: this.props.location.state ? (this.props.location.state.email || '') : '',
+      password: this.props.location.state ? (this.props.location.state.password || '') : ''
     }
   }
 
@@ -40,23 +42,20 @@ class LoginPage extends Component {
     // If user is authed, add jwt to the localstorage
     // then redirect to the referral
     // Else, show an error
-    // console.log('To be fixed before tomorrow')
     fetch('https://young-anchorage-24773.herokuapp.com/signin', {
       headers: new Headers({
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       }),
       method: "POST",
-      // mode: 'cors',
       body: JSON.stringify({email: email, password: password})
     })
       .then(res => res.json())
       .then(res => {
         console.log('User data:', res)
-        if (res.status === 200) {
-          // Write the hash of the user email in the localstorage
-          const newHash = btoa(res.userId)
-          localStorage.setItem('token', newHash)
+        if (res.code === 200) {
+          // Write the jwt token in the localstorage
+          localStorage.setItem('token', res.token)
           this.setState(() => ({
             loginError: false,
             redirect: true
@@ -91,9 +90,10 @@ class LoginPage extends Component {
 
   render() {
     if (!!this.state.redirect) {
+      const redirectTo = this.props.location.state.from
       return (
         <Route
-          render={(props) => <Redirect to={{pathname: this.props.location.state.from.pathname}} />}
+          render={(props) => <Redirect to={{pathname: redirectTo === '/signup' ? '/dashboard' : redirectTo}} />}
         />
       )
     } else {
@@ -105,7 +105,11 @@ class LoginPage extends Component {
               <small style={{color: '#125266'}}>Sign in to get going</small>
             </div>
             {this.state.loginError && <ErrorLoggingIn errorMessage={this.state.errorMessage} close={this.closeButtons} />}
-            <LoginForm handleLogin={this.handleFormSubmit} />
+            <LoginForm
+              handleLogin={this.handleFormSubmit}
+              email={this.state.email}
+              password={this.state.password}
+            />
             <div className="text-center" style={{marginTop: '5px'}}>
               <span style={{fontSize: 'smaller'}}>New here? <Link to="/signup">Sign up</Link> now</span>
             </div>

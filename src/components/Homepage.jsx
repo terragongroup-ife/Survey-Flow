@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import {Route, Redirect} from 'react-router-dom'
+import {checkAuth} from '../helpers/SpecialRoutes'
 import Navigation from './Navigation'
 
 class Homepage extends Component {
@@ -11,32 +13,17 @@ class Homepage extends Component {
   }
 
   isUserLoggedIn = () => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      fetch('/auth', {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        method: "POST",
-        body: JSON.stringify({"user": {email: token.email, authToken: token.authToken}})
-      })
-        .then(res => res.json())
-        .then(res => {
-          console.log('User authenticated:', res)
-          this.setState(() => ({
-            isLoggedIn: !!token,
-            user: res
-          }))
-        })
-        .catch(err => {
-          console.log('Error due to:', err)
-        })
-    } else {
-      this.setState(() => ({
-        isLoggedIn: !!token
-      }))
-    }
+    const {isLoggedIn, data} = checkAuth()
+    this.setState(() => ({
+      isLoggedIn,
+      user: data
+    }))
+  }
+
+  redirectToLogin = () => {
+    this.setState(() => ({
+      redirect: true
+    }))
   }
 
   componentDidMount() {
@@ -44,9 +31,36 @@ class Homepage extends Component {
   }
 
   render() {
-    return (
+    const Content = this.state.user
+    ? () => (
+      <div>
+        <p>Survey Flow</p>
+        <a href="/dashboard"><button className="btn btn-custom">Go to dashboard</button></a>
+      </div>
+    ) : () => (
+      <div>
+        <p>Survey Flow</p>
+        <button
+          type="button"
+          onClick={this.redirectToLogin}
+          className="btn btn-custom"
+        >
+          Log in to your account
+        </button>
+      </div>
+    );
+    return this.state.redirect
+    ? (
+      <Route
+        render={(props) => <Redirect to={{pathname: '/login', state: {from: props.location.pathname}}} />}
+      />
+    ) : (
       <div className="Homepage">
         <Navigation showNavLinks={true} />
+        <div>
+          {<Content />}
+          <p>Content to be filled here soon</p>
+        </div>
       </div>
     )
   }

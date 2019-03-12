@@ -46,24 +46,23 @@ class SignupPage extends Component {
         'Content-Type': 'application/json'
       }),
       method: "POST",
-      // mode: 'cors',
       body: JSON.stringify({email: email, password: password, name: fullName})
     })
       .then(res => res.json())
       .then(res => {
         console.log('User data:', res)
-        if (res.status === 201) {
-          // Write the hash of the user email in the localstorage
-          const newHash = btoa(res.userId)
-          localStorage.setItem('token', newHash)
+        if (res.code === 201) {
           this.setState(() => ({
             signupError: false,
-            redirect: true
+            redirect: true,
+            email,
+            password
           }))
         } else {
           this.setState(() => ({
             signupError: true,
-            errorMessage: res.message
+            errorMessage: res.message,
+            redirect: false
           }))
         }
       })
@@ -104,7 +103,14 @@ class SignupPage extends Component {
     if (!!this.state.redirect) {
       return (
         <Route
-          render={(props) => <Redirect to={{pathname: this.props.location.state.from.pathname}} />}
+          render={(props) => <Redirect to={{
+            pathname: '/login',
+            state: {
+              from: '/signup',
+              email: this.state.email,
+              password: this.state.password
+            }
+          }} />}
         />
       )
     } else {

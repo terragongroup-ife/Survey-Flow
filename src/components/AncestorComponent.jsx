@@ -29,11 +29,11 @@ class AncestorComponent extends Component {
             exact path="/signup"
             component={SignupPage}
           />
-          <PublicRoute
+          <PrivateRoute
             exact path="/dashboard"
             component={Dashboard}
           />
-          <PublicRoute
+          <PrivateRoute
             exact path="/create"
             component={CreateSurvey}
           />
@@ -45,11 +45,7 @@ class AncestorComponent extends Component {
             path="/survey"
             component={FillSurvey}
           />
-          <PrivateRoute
-            path="/"
-            component={Homepage}
-          />
-          {/* <Route exact path="/" component={Homepage}/> */}
+          <Route exact path="/" component={Homepage}/>
         </Switch>
       </>
     )

@@ -6,6 +6,13 @@ import SidebarNavigation from './SidebarNavigation'
 
 class Dashboard extends Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      user: this.props.user
+    }
+  }
+
   componentDidMount() {
     $('#sidebarCollapse').on('click', function () {
       $('#content').toggleClass('active')

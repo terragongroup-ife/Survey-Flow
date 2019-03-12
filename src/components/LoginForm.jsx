@@ -13,7 +13,9 @@ class LoginForm extends Component {
   }
 
   static propTypes = {
-    handleLogin: PropTypes.func
+    handleLogin: PropTypes.func,
+    email: PropTypes.string,
+    password: PropTypes.string
   }
 
   handleEmailChange = (email) => {

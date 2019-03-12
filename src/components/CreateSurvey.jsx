@@ -7,6 +7,15 @@ import { cloneDeep } from 'lodash'
 import SurveyMetaInfo from './SurveyMetaInfoModal'
 import SurveyQuestion from './SurveyQuestion'
 
+const SurveySaved = (props) => (
+  <div id="survey">
+    <div>
+      <p>Survey published successfully!</p>
+      <a href="/dashboard"><button type="button" className="btn btn-custom">Go to dashboard</button></a>
+    </div>
+  </div>
+)
+
 class CreateSurvey extends Component {
 
   constructor(props) {
@@ -16,6 +25,7 @@ class CreateSurvey extends Component {
     this.tabIndex = 0
     this.surveyNameSavedBefore = false
     this.state = {
+      user: this.props.user,
       surveyName: 'New Survey',
       surveyDescription: 'A new survey',
       surveyCategory: '',
@@ -128,6 +138,43 @@ class CreateSurvey extends Component {
     // Check if there are questions
     // If no, don't publish
     // If yes, fetch data from the state then send to the backend
+    let surveyData = {}
+    surveyData['userId'] = this.state.user.userId
+    surveyData['surveyName'] = this.state.surveyName
+    surveyData['surveyCategory'] = this.state.surveyCategory
+    surveyData['surveyDescription'] = this.state.surveyDescription
+    surveyData['surveyQuestions'] = this.state.questions
+
+    // Now, post the survey to the backend
+    fetch('https://young-anchorage-24773.herokuapp.com/post-survey', {
+      headers: new Headers({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }),
+      method: "POST",
+      body: JSON.stringify(surveyData)
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.code === 201) {
+          // Survey saved
+          console.log('Survey saved successfully')
+          this.setState(() => ({
+            surveySaved: true
+          }))
+        } else {
+          console.log('Survey not saved')
+          this.setState(() => ({
+            surveySaved: false
+          }))
+        }
+      })
+      .catch(err => {
+        console.log('Error:', err)
+        this.setState(() => ({
+          surveySaved: false
+        }))
+      })
   }
 
   componentDidMount() {
@@ -157,7 +204,9 @@ class CreateSurvey extends Component {
       )
     })
 
-    return (
+    return this.state.surveySaved
+    ? <SurveySaved />
+    : (
       <div id="survey">
         <div className="survey-navigation">
           <nav className="navbar navbar-expand-sm navbar-dark bg-dark fixed-top justify-content-between">
