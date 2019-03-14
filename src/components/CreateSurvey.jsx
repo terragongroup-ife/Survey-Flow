@@ -139,7 +139,7 @@ class CreateSurvey extends Component {
     // If no, don't publish
     // If yes, fetch data from the state then send to the backend
     let surveyData = {}
-    surveyData['userId'] = this.state.user.userId
+    surveyData['userId'] = this.state.user.userID
     surveyData['surveyName'] = this.state.surveyName
     surveyData['surveyCategory'] = this.state.surveyCategory
     surveyData['surveyDescription'] = this.state.surveyDescription
