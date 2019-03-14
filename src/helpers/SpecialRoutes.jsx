@@ -2,6 +2,7 @@ import React from 'react'
 import {Route, Redirect} from 'react-router-dom'
 import jwt from 'jsonwebtoken'
 
+console.log('Process.env:', process.env)
 const secret_key = process.env.REACT_APP_JWT_SECRET_KEY
 
 const checkAuth = () => {
