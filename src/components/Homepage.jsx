@@ -33,12 +33,12 @@ class Homepage extends Component {
   render() {
     const Content = this.state.user
     ? () => (
-      <div>
+      <div className="container">
         <p>Survey Flow</p>
         <a href="/dashboard"><button className="btn btn-custom">Go to dashboard</button></a>
       </div>
     ) : () => (
-      <div>
+      <div className="container">
         <p>Survey Flow</p>
         <button
           type="button"
