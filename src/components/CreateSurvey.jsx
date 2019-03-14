@@ -48,10 +48,11 @@ class CreateSurvey extends Component {
     }))
   }
 
-  handleSurveyMetaFormSubmit = ({surveyName, surveyDescription}) => {
+  handleSurveyMetaFormSubmit = ({surveyName, surveyCategory, surveyDescription}) => {
     this.setState(() => ({
       surveyName,
       surveyDescription,
+      surveyCategory,
       showMetaInfoModal: false
     }))
   }
@@ -146,7 +147,7 @@ class CreateSurvey extends Component {
     surveyData['surveyQuestions'] = this.state.questions
 
     // Now, post the survey to the backend
-    fetch('https://young-anchorage-24773.herokuapp.com/questions', {
+    fetch('https://young-anchorage-24773.herokuapp.com/post-survey', {
       headers: new Headers({
         'Accept': 'application/json',
         'Content-Type': 'application/json'

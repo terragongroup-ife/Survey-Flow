@@ -73,7 +73,7 @@ class SurveyMetaInfo extends Component {
     this.state = {
       surveyName: this.props.surveyName,
       surveyDescription: this.props.surveyDescription,
-      surveyCategory: this.props.surveyCategory
+      surveyCategory: this.props.surveyCategory || "customerSatisfaction"
     }
 
     this.initialState = {...this.state}
