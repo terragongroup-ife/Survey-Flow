@@ -90,7 +90,7 @@ class Dashboard extends Component {
                 <div className="text-underline">Your Surveys</div>
                 <div className="row justify-content-center">
                   {SurveysToShow}
-                  {!this.state.surveys.length && <><p>No surveys here yet.</p><p>Click on the + button to create one now.</p></>}
+                  {!this.state.surveys.length && <p style={{marginTop: '30vh', lineHeight: '100%'}}>No surveys here yet.<br /> Click on the + button to create one now.</p>}
                 </div>
               </div>
             </div>
