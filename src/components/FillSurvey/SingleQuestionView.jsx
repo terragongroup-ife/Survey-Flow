@@ -34,19 +34,16 @@ class SingleQuestionView extends Component {
         response: question['options'].find(option => option.optionId === this.state.response_id)['optionText'],
         question_id: question['question_id'],
       }
-      console.log('For multichoice:', responseState)
     } else {
       responseState = {
         ...this.state,
         question_id: this.props.currentQuestion['question_id'],
       }
-      console.log('For text:', responseState)
     }
     this.props.handleNextQuestionView(responseState)
   }
 
   handlePrevClick = () => {
-    console.log('About to go prev')
     this.props.handlePrevQuestionView(this.props.prevQuestion)
   }
 
@@ -72,7 +69,6 @@ class SingleQuestionView extends Component {
   }
 
   handleTextChange = (value) => {
-    console.log(value)
     this.setState({
       response: value,
       response_id: ''

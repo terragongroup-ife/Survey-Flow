@@ -1,5 +1,8 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
+import { isEqual } from 'lodash'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCompactDisc } from '@fortawesome/free-solid-svg-icons';
 
 class LoginForm extends Component {
 
@@ -33,7 +36,19 @@ class LoginForm extends Component {
   handleSubmit = (e) => {
     e.preventDefault()
     if (this.state.email !== '' && this.state.password !== '') {
-      this.props.handleLogin(this.state)
+      this.setState(() => ({
+        loading: true
+      }), () => this.props.handleLogin(this.state))
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!isEqual(this.props, prevProps)) {
+      if (this.props.loginError) {
+        this.setState(() => ({
+          loading: false
+        }))
+      }
     }
   }
 
@@ -64,7 +79,9 @@ class LoginForm extends Component {
             />
             <label htmlFor="password" style={{color: '#125266'}}>Password</label>
           </div>
-          <button type="submit" className="btn btn-custom">Sign in</button>
+          <button type="submit" className="btn btn-custom">
+            {this.state.loading && <FontAwesomeIcon size="1x" pulse icon={faCompactDisc} />} Sign in
+          </button>
         </form>
       </div>
     )

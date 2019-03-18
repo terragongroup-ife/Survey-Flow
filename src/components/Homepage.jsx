@@ -33,20 +33,11 @@ class Homepage extends Component {
   render() {
     const Content = this.state.user
     ? () => (
-      <div className="container">
-        <p>Survey Flow</p>
-        <a href="/dashboard"><button className="btn btn-custom">Go to dashboard</button></a>
-      </div>
+      <a href="/dashboard"><button className="btn btn-custom">Go to dashboard</button></a>
     ) : () => (
-      <div className="container">
-        <p>Survey Flow</p>
-        <button
-          type="button"
-          onClick={this.redirectToLogin}
-          className="btn btn-custom"
-        >
-          Log in to your account
-        </button>
+      <div style={{display: 'flex', justifyContent: 'space-evenly'}}>
+        <button style={{marginRight: '30px', width: 'auto'}} onClick={this.redirectToLogin} type="button" className="btn btn-custom">Log in</button>
+        <a href="/signup"><button type="button" className="btn btn-custom">Sign up</button></a>
       </div>
     );
     return this.state.redirect
@@ -55,11 +46,14 @@ class Homepage extends Component {
         render={(props) => <Redirect to={{pathname: '/login', state: {from: props.location.pathname}}} />}
       />
     ) : (
-      <div className="Homepage">
-        <Navigation showNavLinks={true} />
-        <div>
-          {<Content />}
-          <p>Content to be filled here soon</p>
+      <div id="home-page">
+        <Navigation showNavLinks />
+        <div className="Homepage text-center">
+          <div>
+            <h1 style={{color: '#333e48'}}>Online interaction made easier</h1>
+            <p>Engage people through surveys and get their opinions easily</p>
+            {<Content />}
+          </div>
         </div>
       </div>
     )

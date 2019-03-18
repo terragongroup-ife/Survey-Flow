@@ -9,6 +9,14 @@ class Navigation extends Component {
     showSidebarToggleButton: PropTypes.bool
   }
 
+  handleSignOut = (e) => {
+    e.preventDefault()
+    if (localStorage.getItem('token')) {
+      localStorage.removeItem('token')
+      window.location = '/'
+    }
+  }
+
   render() {
     const NavLinks = () => (
       <>
@@ -51,6 +59,8 @@ class Navigation extends Component {
                 <a className="dropdown-item" href="/#">Help</a>
                 <a className="dropdown-item" href="/#">Go Pro!</a>
                 <a className="dropdown-item" href="/#">Profile</a>
+                <hr/>
+                <button onClick={this.handleSignOut} className=" btn btn-danger dropdown-item">Sign out</button>
               </div>
             </li>
           </ul>

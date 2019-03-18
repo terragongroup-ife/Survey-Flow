@@ -1,5 +1,8 @@
 import React, {Component} from 'react'
 import PropTypes from 'prop-types'
+import { isEqual } from 'lodash'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCompactDisc } from '@fortawesome/free-solid-svg-icons';
 
 class SignupForm extends Component {
 
@@ -44,7 +47,19 @@ class SignupForm extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault()
-    this.props.handleSignup(this.state)
+    this.setState(() => ({
+      loading: true
+    }), () => this.props.handleSignup(this.state))
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!isEqual(this.props, prevProps)) {
+      if (this.props.signupError) {
+        this.setState(() => ({
+          loading: false
+        }))
+      }
+    }
   }
 
   render() {
@@ -96,7 +111,9 @@ class SignupForm extends Component {
             />
             <label htmlFor="repeat-password" style={{color: '#125266'}}>Repeat Password</label>
           </div>
-          <button type="submit" className="btn btn-custom">Sign up</button>
+          <button type="submit" className="btn btn-custom">
+            {this.state.loading && <FontAwesomeIcon size="1x" pulse icon={faCompactDisc} />} Sign up
+          </button>
         </form>
       </div>
     )

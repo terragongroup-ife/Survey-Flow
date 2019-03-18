@@ -122,7 +122,7 @@ class SignupPage extends Component {
               <small style={{color: '#125266'}}>Sign up to continue</small>
             </div>
             {this.state.signupError && <ErrorSigningUp errorMessage={this.state.errorMessage} close={this.closeButtons} />}
-            <SignupForm handleSignup={this.handleFormSubmit} />
+            <SignupForm handleSignup={this.handleFormSubmit} signupError={this.state.signupError} />
             <div className="text-center" style={{marginTop: '5px'}}>
               <span style={{fontSize: 'smaller'}}>Already have an account? <Link to="/login">Sign in</Link> now</span>
             </div>

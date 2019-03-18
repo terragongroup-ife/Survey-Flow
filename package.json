@@ -19,6 +19,7 @@
     "serve": "^10.1.2"
   },
   "scripts": {
+    "start:dev": "HTTPS=true react-scripts start",
     "start": "serve -s build",
     "build": "react-scripts build",
     "test": "react-scripts test",

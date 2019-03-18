@@ -3,24 +3,79 @@ import $ from 'jquery'
 import {Link} from 'react-router-dom'
 import Navigation from './Navigation'
 import SidebarNavigation from './SidebarNavigation'
+import Loading from './Loading'
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 class Dashboard extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-      user: this.props.user
+      user: this.props.user,
+      loading: true
     }
   }
 
-  componentDidMount() {
+  toggleSidebar = () => {
     $('#sidebarCollapse').on('click', function () {
       $('#content').toggleClass('active')
       $('#sidebar').toggleClass('active')
     });
   }
 
+  componentDidUpdate() {
+    if (this.state.surveys) {
+      this.toggleSidebar()
+    }
+  }
+
+  componentDidMount() {
+    const userId = this.state.user.userID
+    // Fetch the user's surveys
+    fetch(`https://young-anchorage-24773.herokuapp.com/surveys/${userId}`)
+      .then(res => res.json())
+      .then(res => {
+        if (res.code === 201) {
+          // Surveys fetched
+          this.setState(() => ({
+            surveys: res.result,
+            error: false,
+            loading: false
+          }))
+        } else {
+          this.setState(() => ({
+            error: true,
+            loading: false
+          }))
+        }
+      })
+      .catch(err => {
+        this.setState(() => ({
+          error: true,
+          loading: false
+        }))
+      })
+  }
+
   render() {
+    if (this.state.error) {
+      return <div>Error fetching your surveys</div>
+    } else if (this.state.loading) {
+      return <Loading message="Fetching all your surveys" />
+    }
+    const SurveysToShow = this.state.surveys.map(survey => (
+      <div key={survey._id} className="survey-item">
+        <div className="survey-item__thumbnail"></div>
+        <div className="survey-item__meta">
+          <div className="survey-item__meta-title">{survey.surveyName}</div>
+          <div className="survey-item__meta-response">{Object.keys(survey.surveyQuestions).length} questions</div>
+          <div className="survey-item__meta-options">
+            <a href={`/survey/${survey._id}`} rel="noopener noreferrer" target='_blank'><FontAwesomeIcon icon={faExternalLinkAlt} /></a>
+          </div>
+        </div>
+      </div>
+    ))
     return (
       <div className="dashboard">
         <SidebarNavigation />
@@ -32,72 +87,10 @@ class Dashboard extends Component {
             />
             <div className="dashboard-content text-large">
               <div className="container content-container">
-                <div className="text-underline">My Surveys</div>
+                <div className="text-underline">Your Surveys</div>
                 <div className="row justify-content-center">
-                  <div className="survey-item">
-                    <div className="survey-item__thumbnail"></div>
-                    <div className="survey-item__meta">
-                      <div className="survey-item__meta-title">Job Application</div>
-                      <div className="survey-item__meta-response">5 responses</div>
-                      <div className="survey-item__meta-options"></div>
-                    </div>
-                  </div>
-                  <div className="survey-item">
-                    <div className="survey-item__thumbnail"></div>
-                    <div className="survey-item__meta">
-                      <div className="survey-item__meta-title">Invitation</div>
-                      <div className="survey-item__meta-response">No response</div>
-                      <div className="survey-item__meta-options"></div>
-                    </div>
-                  </div>
-                  <div className="survey-item">
-                    <div className="survey-item__thumbnail"></div>
-                    <div className="survey-item__meta">
-                      <div className="survey-item__meta-title">Research</div>
-                      <div className="survey-item__meta-response">5 responses</div>
-                      <div className="survey-item__meta-options"></div>
-                    </div>
-                  </div>
-                  <div className="survey-item">
-                    <div className="survey-item__thumbnail"></div>
-                    <div className="survey-item__meta">
-                      <div className="survey-item__meta-title">Feedback</div>
-                      <div className="survey-item__meta-response">2 responses</div>
-                      <div className="survey-item__meta-options"></div>
-                    </div>
-                  </div>
-                  <div className="survey-item">
-                    <div className="survey-item__thumbnail"></div>
-                    <div className="survey-item__meta">
-                      <div className="survey-item__meta-title">Report</div>
-                      <div className="survey-item__meta-response">15 responses</div>
-                      <div className="survey-item__meta-options"></div>
-                    </div>
-                  </div>
-                  <div className="survey-item">
-                    <div className="survey-item__thumbnail"></div>
-                    <div className="survey-item__meta">
-                      <div className="survey-item__meta-title">Job Application</div>
-                      <div className="survey-item__meta-response">5 responses</div>
-                      <div className="survey-item__meta-options"></div>
-                    </div>
-                  </div>
-                  <div className="survey-item">
-                    <div className="survey-item__thumbnail"></div>
-                    <div className="survey-item__meta">
-                      <div className="survey-item__meta-title">Job Application</div>
-                      <div className="survey-item__meta-response">5 responses</div>
-                      <div className="survey-item__meta-options"></div>
-                    </div>
-                  </div>
-                  <div className="survey-item">
-                    <div className="survey-item__thumbnail"></div>
-                    <div className="survey-item__meta">
-                      <div className="survey-item__meta-title">Job Application</div>
-                      <div className="survey-item__meta-response">5 responses</div>
-                      <div className="survey-item__meta-options"></div>
-                    </div>
-                  </div>
+                  {SurveysToShow}
+                  {!this.state.surveys && 'No surveys here yet. Click on the + button to create one now.'}
                 </div>
               </div>
             </div>

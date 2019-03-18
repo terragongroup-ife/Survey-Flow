@@ -52,7 +52,6 @@ class LoginPage extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        console.log('User data:', res)
         if (res.code === 200) {
           // Write the jwt token in the localstorage
           localStorage.setItem('token', res.token)
@@ -68,7 +67,6 @@ class LoginPage extends Component {
         }
       })
       .catch(err => {
-        console.log(err)
         this.setState(() => ({
           loginError: true,
           errorMessage: err.message
@@ -77,8 +75,6 @@ class LoginPage extends Component {
   }
 
   handleFormSubmit = (data) => {
-    // Log 
-    console.log(data.email, data.password)
     this.setState(() => ({
       loading: true
     }), this.logUserIn(data))
@@ -90,7 +86,7 @@ class LoginPage extends Component {
 
   render() {
     if (!!this.state.redirect) {
-      const redirectTo = this.props.location.state.from
+      const redirectTo = this.props.location.state ? this.props.location.state.from : '/'
       return (
         <Route
           render={(props) => <Redirect to={{pathname: redirectTo === '/signup' ? '/dashboard' : redirectTo}} />}
@@ -109,6 +105,7 @@ class LoginPage extends Component {
               handleLogin={this.handleFormSubmit}
               email={this.state.email}
               password={this.state.password}
+              loginError={this.state.loginError}
             />
             <div className="text-center" style={{marginTop: '5px'}}>
               <span style={{fontSize: 'smaller'}}>New here? <Link to="/signup">Sign up</Link> now</span>
@@ -121,13 +118,3 @@ class LoginPage extends Component {
 }
 
 export default LoginPage
-
-
-
-
-// TODO FOR SIGNUP AND SIGN IN
-// - Send the data to the backend
-// - based on the response, set the error state and message accordingly to the user
-// - If no error, redirect user to the page they were coming from
-// - Remember to store user auth state in localStorae, and to fetch from there everytime in a private route
-// - Work on the protected route for the Fill Survey Page

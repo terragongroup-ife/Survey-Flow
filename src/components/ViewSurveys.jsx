@@ -1,4 +1,11 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+
+class ViewSurveysWrapper extends Component {
+  render() {
+    return <ViewSurveys {...this.props} />
+  }
+}
 
 class ViewSurveys extends Component {
 
@@ -7,6 +14,14 @@ class ViewSurveys extends Component {
     this.state = {
       user: this.props.user
     }
+  }
+
+  static propTypes = {
+    surveyData: PropTypes.string
+  }
+
+  componentDidMount() {
+    // Do sth
   }
   
   render() {
@@ -18,4 +33,4 @@ class ViewSurveys extends Component {
   }
 }
 
-export default ViewSurveys
+export default ViewSurveysWrapper
