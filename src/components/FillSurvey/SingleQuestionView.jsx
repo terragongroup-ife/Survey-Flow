@@ -47,14 +47,22 @@ class SingleQuestionView extends Component {
     this.props.handlePrevQuestionView(this.props.prevQuestion)
   }
 
-  handleCheckboxChange = (value, index) => {
-    // Update the content of the response and id array at index
-    const response = this.props.currentQuestion['options'].find(option => option.optionId === this.state.response_id)['optionText']
+  handleCheckboxChange = (value, index, checked) => {
     const responseState = [...this.state.response]
     const responseIdState = [...this.state.response_id]
-    responseState[index] = response
-    responseIdState[index] = value
 
+    // Add the value to state if the checkbox is checked
+    if (checked) {
+      const response = this.props.currentQuestion['options'].find(option => option.optionId === value)['optionText']
+      responseState[index] = response
+      responseIdState[index] = value
+    }
+    // Else if it is unchecked, remove the value
+    else {
+      delete responseState[index]
+      delete responseIdState[index]
+    }
+    
     this.setState(() => ({
       response: responseState,
       response_id: responseIdState
@@ -123,7 +131,7 @@ class SingleQuestionView extends Component {
               type="checkbox"
               name="checks"
               value={option['optionId']}
-              onChange={({target: {value}}) => this.handleCheckboxChange(value, index)}
+              onChange={({target: {value, checked}}) => this.handleCheckboxChange(value, index, checked)}
               checked={!!this.state.response_id[index]}
               className="form-check-input"
             />

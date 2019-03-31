@@ -6,7 +6,7 @@ import Homepage from './Homepage'
 import LoginPage from './Login/LoginPage'
 import SignupPage from './Signup/SignupPage'
 import CreateSurvey from './CreateSurvey/CreateSurvey'
-import Dashboard from './Dashboard'
+import Dashboard from './Dashboard/Dashboard'
 import FillSurvey from './FillSurvey/FillSurvey'
 import ViewSurveys from './ViewSurveys'
 import Custom404Page from './Custom404Page'
@@ -31,7 +31,7 @@ class AncestorComponent extends Component {
             component={SignupPage}
           />
           <PrivateRoute
-            exact path="/dashboard"
+            path="/dashboard"
             component={Dashboard}
           />
           <PrivateRoute

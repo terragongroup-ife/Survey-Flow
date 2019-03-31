@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import $ from 'jquery'
 import {Link} from 'react-router-dom'
-import Navigation from './Navigation'
+import Navigation from '../Navigation'
 import SidebarNavigation from './SidebarNavigation'
-import Loading from './Loading'
+import Loading from '../Loading'
 import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
@@ -11,10 +11,36 @@ class Dashboard extends Component {
 
   constructor(props) {
     super(props)
+    this.surveyCategory = {
+      'customerSatisfaction': 'Customer satisfaction',
+      'feedback': 'Feedback',
+      'research': 'Research',
+      'quiz': 'Quiz',
+      'evaluation': 'Evaluation',
+      'registrationForm': 'Registration Form',
+      'applicationForm': 'Application Form',
+      'polls': 'Polls',
+      'demographics': 'Demographics',
+      'educational': 'Educational',
+      'industrySpecific': 'Industry Specific',
+      'forFun': 'For fun',
+      'invitation': 'Invitation',
+      'political': 'Political',
+      'others': 'Others',
+      'all': 'All'
+    }
     this.state = {
       user: this.props.user,
-      loading: true
+      loading: true,
+      modalShown: false,
+      currentCategory: "all"
     }
+  }
+
+  handleSwitchCategories = (category) => {
+    this.setState(() => ({
+      currentCategory: category
+    }))
   }
 
   toggleSidebar = () => {
@@ -42,7 +68,7 @@ class Dashboard extends Component {
             surveys: res.result,
             error: false,
             loading: false
-          }))
+          }), () => this.check)
         } else {
           this.setState(() => ({
             error: true,
@@ -64,21 +90,35 @@ class Dashboard extends Component {
     } else if (this.state.loading) {
       return <Loading message="Fetching all your surveys" />
     }
-    const SurveysToShow = this.state.surveys.map(survey => (
-      <div key={survey._id} className="survey-item">
-        <div className="survey-item__thumbnail"></div>
-        <div className="survey-item__meta">
-          <div className="survey-item__meta-title">{survey.surveyName}</div>
-          <div className="survey-item__meta-response">{Object.keys(survey.surveyQuestions).length} questions</div>
-          <div className="survey-item__meta-options">
-            <a href={`/survey/${survey._id}`} rel="noopener noreferrer" target='_blank'><FontAwesomeIcon icon={faExternalLinkAlt} /></a>
+
+    // Filter the surveys to render based on category
+    let SurveysToShow = [], categories = new Set()
+    this.state.surveys.forEach(survey => {
+      if ((this.state.currentCategory === 'all') || (this.state.currentCategory === survey.surveyCategory)) {
+        SurveysToShow.push((
+          <div key={survey._id} className="survey-item">
+            <div className="survey-item__thumbnail"></div>
+            <div className="survey-item__meta">
+              <div className="survey-item__meta-title">{survey.surveyName}</div>
+              <div className="survey-item__meta-response">{Object.keys(survey.surveyQuestions).length} questions</div>
+              <div className="survey-item__meta-options">
+                <a href={`/survey/${survey._id}`} rel="noopener noreferrer" target='_blank'><FontAwesomeIcon icon={faExternalLinkAlt} /></a>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    ))
+        ))
+      }
+      categories.add(survey.surveyCategory)
+    })
+    categories = Array.from(categories)
+
     return (
       <div className="dashboard">
-        <SidebarNavigation />
+        <SidebarNavigation
+          currentCategory={this.state.currentCategory}
+          categories={categories}
+          switchCategories={this.handleSwitchCategories}
+        />
         <div id="content">
           <div>
             <Navigation
@@ -87,7 +127,7 @@ class Dashboard extends Component {
             />
             <div className="dashboard-content text-large">
               <div className="container content-container">
-                <div className="text-underline">Your Surveys</div>
+                <div className="text-underline">{this.surveyCategory[this.state.currentCategory]} Surveys</div>
                 <div className="row justify-content-center">
                   {SurveysToShow}
                   {!this.state.surveys.length && <p style={{marginTop: '30vh', lineHeight: '170%', textAlign: 'center'}}>No surveys here yet.<br /> Click on the + button to create one now.</p>}

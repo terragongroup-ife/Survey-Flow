@@ -15,7 +15,6 @@ const checkAuth = () => {
       user_data = jwt.verify(token, secret_key)
       isLoggedIn = true
     } catch (error) {
-      console.log('Error:', error)
       isLoggedIn = false
     }
   }
@@ -29,7 +28,6 @@ const PrivateRoute = ({component: Component, ...rest}) => {
     <Route
       {...rest}
       render={(props) => {
-        console.log('Props.location:', props.location)
         return (isLoggedIn
         ? <Component user={data} {...props} {...rest} />
         : <Redirect to={{pathname: '/login', state: {from: props.location.pathname}}} />)
